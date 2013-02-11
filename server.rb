@@ -13,19 +13,9 @@ load 'rubyamfparser.rb'
 load 'commandhandler.rb'
 load 'flvwriter.rb'
 
-# just for development
-require "sinatra/base"
-require "sinatra/reloader"
-
 set :database, {adapter: "sqlite3", database: "db/rtmpt_sessions.db"}
 
 class Gramophone < Sinatra::Base
-
-	#just for development
-	configure :development do
-  	  register Sinatra::Reloader
-    end
-    #/development
 
 	register Sinatra::ActiveRecordExtension
 
@@ -54,7 +44,7 @@ class Gramophone < Sinatra::Base
 		headers \
 			"Connection" => "keep-alive",
 			"Cache-Control" => "no-cache",
-			"Server" => "Ruby RTMPT Server/0.0.1"
+			"Server" => "Gramophone Server/0.0.1"
 	end
 
 	def increment 
@@ -103,8 +93,7 @@ class Gramophone < Sinatra::Base
 
 	def readHeader(raw)
 		parsed = {}
-
-		# basicHeader = numToOctet(raw[0].unpack("H*")[0].to_i)
+		
 		basicHeader = raw[0].unpack("B8").first
 
 		headerLength = 0
@@ -170,10 +159,6 @@ class Gramophone < Sinatra::Base
 	end
 
 	def bytePad(bytes, count)
-		#addBytes = []
-		#(count - byteArray.length).times { |b| addBytes << "\x00"}
-		#
-		#addBytes.concat(byteArray)
 		bytes.to_s.rjust(count,"\x00")
 	end
 
@@ -182,7 +167,6 @@ class Gramophone < Sinatra::Base
 	end
 
 	def charsToNum(string)
-		#string.reverse.unpack("H*").first.to_i(16)
 		string.unpack("H*").first.to_i(16)
 	end
 
@@ -341,7 +325,6 @@ class Gramophone < Sinatra::Base
 			# PING TYPE.  (0x04) - HEADER IS FOLLOWED BY SIX "00" BYTES.  
 			# THIS CAN BE APPENDED TO OTHER RTMP/AMF DATA REPSONSES.
 			if session.needClearStream
-				# response += addHeader("\x04\x00\x00\x00\x00\x00\x00",2,session.created_at,true,false)
 				response = "\x02\x00\x00\x00\x00\x00\x06\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" + response #hardcoded clear stream with header
 				session.needClearStream = false
 			end
