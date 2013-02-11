@@ -7,9 +7,10 @@ To Run:
 -------
 In root directory, just run `rackup`.
 
-Have SWF connect in an address similar to:
-`rtmpt://127.0.0.1:9292/appName`
-
+Have SWF connect in a manner similar to:
+`nc.objectEncoding = ObjectEncoding.AMF0; // this is required because Gramophone does not support AMF3.`
+`nc.connect("rtmpt://127.0.0.1:9292/demoApp");`
+(though include your own address)
 
 -------------------
 
